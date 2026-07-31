@@ -1,0 +1,39 @@
+{
+  "name": "family-finance-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Household financial management for a single family.",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "prepare": "npm run build:shared",
+    "dev": "npm run build:shared && concurrently -k -n shared,server,client -c yellow,cyan,green \"npm run dev:shared\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:shared": "npm run dev --workspace @family-finance/shared",
+    "dev:server": "npm run dev --workspace @family-finance/server",
+    "dev:client": "npm run dev --workspace @family-finance/client",
+    "build": "npm run build:shared && npm run build:client && npm run build:server",
+    "build:shared": "npm run build --workspace @family-finance/shared",
+    "build:client": "npm run build --workspace @family-finance/client",
+    "build:server": "npm run build --workspace @family-finance/server",
+    "start": "npm run start --workspace @family-finance/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,css,html}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,css,html}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "prettier": "^3.3.3"
+  },
+  "overrides": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}
