@@ -1,9 +1,8 @@
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
-import morgan from 'morgan'
 import { env } from './config/env.js'
-import { errorHandler, notFound } from './middleware/error.js'
+import { errorHandler, notFound, requestLogger } from './middleware/index.js'
 import { apiRouter } from './routes/index.js'
 
 export function createApp() {
@@ -16,10 +15,7 @@ export function createApp() {
   app.use(cors({ origin: env.CORS_ORIGIN.split(',').map((origin) => origin.trim()) }))
   app.use(express.json({ limit: '1mb' }))
   app.use(express.urlencoded({ extended: true, limit: '1mb' }))
-
-  if (env.NODE_ENV === 'development') {
-    app.use(morgan('dev'))
-  }
+  app.use(requestLogger)
 
   app.use('/api', apiRouter)
 

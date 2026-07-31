@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import type { ZodType } from 'zod'
 import { ApiError } from '../utils/ApiError.js'
+import { formatZodIssues } from '../utils/zodError.js'
 
 type RequestPart = 'body' | 'query' | 'params'
 
@@ -13,9 +14,9 @@ export function validate(schema: ZodType, part: RequestPart = 'body') {
       next(
         new ApiError(
           StatusCodes.UNPROCESSABLE_ENTITY,
-          'VALIDATION_ERROR',
-          'Invalid request data',
-          result.error.flatten(),
+          'VALIDATION_FAILED',
+          'Request validation failed',
+          formatZodIssues(result.error),
         ),
       )
       return

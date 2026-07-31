@@ -32,3 +32,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.swp
+
+# Design / planning documents (internal, not for the public repo)
+docs/
+PROJECT_AUDIT.md
+FOUNDATION_REFINEMENT.md
