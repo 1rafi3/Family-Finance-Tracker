@@ -1,4 +1,4 @@
-import type { Document, FilterQuery, Model, UpdateQuery } from 'mongoose'
+import type { FilterQuery, HydratedDocument, Model, UpdateQuery } from 'mongoose'
 import { MAX_PAGE_LIMIT } from '@family-finance/shared'
 import type { Id } from '@family-finance/shared'
 import type { PaginatedResult } from '../types/pagination.js'
@@ -17,18 +17,18 @@ export interface PaginateOptions {
   sort?: Record<string, SortDirection>
 }
 
-export abstract class BaseRepository<T extends Document> {
+export abstract class BaseRepository<T> {
   protected constructor(protected readonly model: Model<T>) {}
 
-  async findById(id: Id): Promise<T | null> {
+  async findById(id: Id): Promise<HydratedDocument<T> | null> {
     return this.model.findById(id).exec()
   }
 
-  async findOne(filter: FilterQuery<T>): Promise<T | null> {
+  async findOne(filter: FilterQuery<T>): Promise<HydratedDocument<T> | null> {
     return this.model.findOne(filter).exec()
   }
 
-  async findMany(filter: FilterQuery<T>, options: FindManyOptions = {}): Promise<T[]> {
+  async findMany(filter: FilterQuery<T>, options: FindManyOptions = {}): Promise<HydratedDocument<T>[]> {
     let query = this.model.find(filter)
     if (options.sort) {
       query = query.sort(options.sort)
@@ -42,15 +42,15 @@ export abstract class BaseRepository<T extends Document> {
     return query.exec()
   }
 
-  async create(data: Record<string, unknown>): Promise<T> {
+  async create(data: Partial<T>): Promise<HydratedDocument<T>> {
     return this.model.create(data)
   }
 
-  async updateById(id: Id, update: UpdateQuery<T>): Promise<T | null> {
+  async updateById(id: Id, update: UpdateQuery<T>): Promise<HydratedDocument<T> | null> {
     return this.model.findByIdAndUpdate(id, update, { new: true, runValidators: true }).exec()
   }
 
-  async deleteById(id: Id): Promise<T | null> {
+  async deleteById(id: Id): Promise<HydratedDocument<T> | null> {
     return this.model.findByIdAndDelete(id).exec()
   }
 
@@ -58,7 +58,7 @@ export abstract class BaseRepository<T extends Document> {
     return this.model.countDocuments(filter).exec()
   }
 
-  async paginate(filter: FilterQuery<T>, options: PaginateOptions): Promise<PaginatedResult<T>> {
+  async paginate(filter: FilterQuery<T>, options: PaginateOptions): Promise<PaginatedResult<HydratedDocument<T>>> {
     const page = Math.max(1, Math.floor(options.page))
     const limit = Math.min(Math.max(1, Math.floor(options.limit)), MAX_PAGE_LIMIT)
     const [items, total] = await Promise.all([

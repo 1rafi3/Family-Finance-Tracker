@@ -5,11 +5,14 @@ import { env } from '../config/env.js'
 import { APP_VERSION } from '../config/version.js'
 import { getDatabaseStatus, isDatabaseConnected } from '../config/database.js'
 import { apiRateLimiter } from '../middleware/rateLimiter.js'
+import { authRouter } from '../modules/auth/index.js'
 import { success } from '../utils/ApiResponse.js'
 
 export const apiRouter = Router()
 
 apiRouter.use(apiRateLimiter)
+
+apiRouter.use('/auth', authRouter)
 
 apiRouter.get('/health', (_req, res) => {
   const connected = isDatabaseConnected()

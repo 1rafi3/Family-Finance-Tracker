@@ -1,3 +1,5 @@
+export * from './authenticate.js'
+export * from './authorize.js'
 export * from './error.js'
 export * from './rateLimiter.js'
 export * from './requestLogger.js'
