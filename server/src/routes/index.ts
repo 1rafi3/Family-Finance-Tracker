@@ -8,6 +8,7 @@ import { apiRateLimiter } from '../middleware/rateLimiter.js'
 import { authRouter } from '../modules/auth/index.js'
 import { userRouter } from '../modules/user/index.js'
 import { walletRouter } from '../modules/wallet/index.js'
+import { transactionRouter } from '../modules/transaction/index.js'
 import { success } from '../utils/ApiResponse.js'
 
 export const apiRouter = Router()
@@ -17,6 +18,7 @@ apiRouter.use(apiRateLimiter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/users', userRouter)
 apiRouter.use('/wallets', walletRouter)
+apiRouter.use('/transactions', transactionRouter)
 
 apiRouter.get('/health', (_req, res) => {
   const connected = isDatabaseConnected()

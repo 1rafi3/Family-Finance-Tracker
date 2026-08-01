@@ -1,4 +1,4 @@
-import type { HydratedDocument } from 'mongoose'
+import type { ClientSession, HydratedDocument } from 'mongoose'
 import type { Id } from '@family-finance/shared'
 import { WalletModel, type WalletDoc } from '../../models/index.js'
 import { BaseRepository } from '../../repositories/index.js'
@@ -24,5 +24,9 @@ export class WalletRepository extends BaseRepository<WalletDoc> {
 
   archive(id: Id): Promise<HydratedDocument<WalletDoc> | null> {
     return this.updateById(id, { isArchived: true })
+  }
+
+  findByIdWithSession(id: Id, session: ClientSession): Promise<HydratedDocument<WalletDoc> | null> {
+    return this.model.findById(id).session(session).exec()
   }
 }

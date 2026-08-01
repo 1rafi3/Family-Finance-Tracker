@@ -2,13 +2,18 @@ import { StatusCodes } from 'http-status-codes'
 import mongoose from 'mongoose'
 import { addMoney, subtractMoney, ZERO_MONEY } from '@family-finance/shared'
 import type { Money, Wallet } from '@family-finance/shared'
-import type { HydratedDocument } from 'mongoose'
+import type { ClientSession, HydratedDocument } from 'mongoose'
 import { ApiError } from '../../utils/ApiError.js'
 import { serializeWallet } from '../../utils/walletSerializer.js'
 import type { WalletDoc } from '../../models/index.js'
 import type { WalletRepository } from './wallet.repository.js'
 import type { WalletCreateInput, WalletUpdateInput } from './wallet.schema.js'
 import type { WalletCreateData } from './wallet.types.js'
+
+export interface BalanceAdjustOptions {
+  /** Skips the archived-wallet rejection (used when reversing historical effects). */
+  skipArchivedCheck?: boolean
+}
 
 export class WalletService {
   constructor(private readonly walletRepository: WalletRepository) {}
@@ -62,28 +67,32 @@ export class WalletService {
     return serializeWallet(archived)
   }
 
-  async increaseBalance(walletId: string, amount: Money): Promise<void> {
-    const wallet = await this.walletRepository.findById(walletId)
+  async increaseBalance(walletId: string, amount: Money, session?: ClientSession, options: BalanceAdjustOptions = {}): Promise<void> {
+    const wallet = session
+      ? await this.walletRepository.findByIdWithSession(walletId, session)
+      : await this.walletRepository.findById(walletId)
     if (!wallet) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'WALLET_NOT_FOUND', 'Wallet not found')
     }
-    if (wallet.isArchived) {
+    if (!options.skipArchivedCheck && wallet.isArchived) {
       throw new ApiError(StatusCodes.CONFLICT, 'WALLET_ARCHIVED', 'Wallet is archived')
     }
     wallet.balance = addMoney(wallet.balance, amount)
-    await wallet.save()
+    await wallet.save(session ? { session } : undefined)
   }
 
-  async decreaseBalance(walletId: string, amount: Money): Promise<void> {
-    const wallet = await this.walletRepository.findById(walletId)
+  async decreaseBalance(walletId: string, amount: Money, session?: ClientSession, options: BalanceAdjustOptions = {}): Promise<void> {
+    const wallet = session
+      ? await this.walletRepository.findByIdWithSession(walletId, session)
+      : await this.walletRepository.findById(walletId)
     if (!wallet) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'WALLET_NOT_FOUND', 'Wallet not found')
     }
-    if (wallet.isArchived) {
+    if (!options.skipArchivedCheck && wallet.isArchived) {
       throw new ApiError(StatusCodes.CONFLICT, 'WALLET_ARCHIVED', 'Wallet is archived')
     }
     wallet.balance = subtractMoney(wallet.balance, amount)
-    await wallet.save()
+    await wallet.save(session ? { session } : undefined)
   }
 
   private requireOwnWallet(actorId: string, wallet: HydratedDocument<WalletDoc> | null): HydratedDocument<WalletDoc> {
