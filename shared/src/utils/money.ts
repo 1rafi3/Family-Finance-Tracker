@@ -22,3 +22,32 @@ export function toMoneyString(value: number): Money {
   }
   return value.toFixed(2)
 }
+
+function toCents(money: Money): number {
+  const negative = money.startsWith('-')
+  const [whole, fraction] = (negative ? money.slice(1) : money).split('.')
+  const cents = Number(whole) * 100 + Number(fraction ?? '0')
+  return negative ? -cents : cents
+}
+
+function fromCents(cents: number): Money {
+  const negative = cents < 0
+  const abs = Math.abs(cents)
+  const whole = Math.floor(abs / 100)
+  const fraction = String(abs % 100).padStart(2, '0')
+  return `${negative ? '-' : ''}${whole}.${fraction}`
+}
+
+/**
+ * Exact decimal-safe addition of two money strings. Operates on integer cents
+ * to avoid floating-point error (domain §2.6). Result is a fixed two-decimal
+ * money string.
+ */
+export function addMoney(a: Money, b: Money): Money {
+  return fromCents(toCents(a) + toCents(b))
+}
+
+/** Exact decimal-safe subtraction of two money strings (`a - b`). */
+export function subtractMoney(a: Money, b: Money): Money {
+  return fromCents(toCents(a) - toCents(b))
+}

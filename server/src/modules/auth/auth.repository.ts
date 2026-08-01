@@ -1,5 +1,5 @@
 import type { HydratedDocument } from 'mongoose'
-import type { Id } from '@family-finance/shared'
+import type { Id, UserRole } from '@family-finance/shared'
 import { UserModel, type UserDoc } from '../../models/index.js'
 import { BaseRepository } from '../../repositories/index.js'
 
@@ -8,6 +8,7 @@ interface CreateUserData {
   lastName: string
   email: string
   passwordHash: string
+  role: UserRole
 }
 
 export class AuthRepository extends BaseRepository<UserDoc> {
@@ -23,8 +24,16 @@ export class AuthRepository extends BaseRepository<UserDoc> {
     return this.findOne({ _id: id, isActive: true })
   }
 
+  countAdmins(): Promise<number> {
+    return this.count({ role: 'ADMIN' })
+  }
+
   createUser(data: CreateUserData): Promise<HydratedDocument<UserDoc>> {
     return this.create(data)
+  }
+
+  updatePassword(id: Id, passwordHash: string): Promise<HydratedDocument<UserDoc> | null> {
+    return this.updateById(id, { passwordHash })
   }
 
   async updateLastLoginAt(id: Id): Promise<void> {

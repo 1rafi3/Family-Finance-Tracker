@@ -4,4 +4,6 @@ export const AUTH_ERROR_MESSAGES = {
   EMAIL_IN_USE: 'An account with this email already exists',
   AUTH_REQUIRED: 'Authentication required',
   TOKEN_INVALID: 'Invalid or expired token',
+  PASSWORD_INCORRECT: 'Current password is incorrect',
+  PASSWORD_UNCHANGED: 'New password must be different from the current password',
 } as const
