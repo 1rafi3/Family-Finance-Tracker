@@ -9,6 +9,9 @@ import { authRouter } from '../modules/auth/index.js'
 import { userRouter } from '../modules/user/index.js'
 import { walletRouter } from '../modules/wallet/index.js'
 import { transactionRouter } from '../modules/transaction/index.js'
+import { categoryRouter } from '../modules/category/index.js'
+import { personRouter } from '../modules/person/index.js'
+import { budgetRouter } from '../modules/budget/index.js'
 import { success } from '../utils/ApiResponse.js'
 
 export const apiRouter = Router()
@@ -19,6 +22,9 @@ apiRouter.use('/auth', authRouter)
 apiRouter.use('/users', userRouter)
 apiRouter.use('/wallets', walletRouter)
 apiRouter.use('/transactions', transactionRouter)
+apiRouter.use('/categories', categoryRouter)
+apiRouter.use('/people', personRouter)
+apiRouter.use('/budgets', budgetRouter)
 
 apiRouter.get('/health', (_req, res) => {
   const connected = isDatabaseConnected()

@@ -1,4 +1,4 @@
-import type { ClientSession, HydratedDocument } from 'mongoose'
+import mongoose, { type ClientSession, type HydratedDocument } from 'mongoose'
 import type { Id } from '@family-finance/shared'
 import { WalletModel, type WalletDoc } from '../../models/index.js'
 import { BaseRepository } from '../../repositories/index.js'
@@ -15,7 +15,9 @@ export class WalletRepository extends BaseRepository<WalletDoc> {
   }
 
   listOwn(ownerId: Id): Promise<HydratedDocument<WalletDoc>[]> {
-    return this.findMany({ ownerId, isArchived: false }, { sort: { name: 1 } })
+    const ownerObjectId =
+      typeof ownerId === 'string' ? new mongoose.Types.ObjectId(ownerId) : ownerId
+    return this.findMany({ ownerId: ownerObjectId, isArchived: false }, { sort: { name: 1 } })
   }
 
   updateDetails(id: Id, data: UpdateWalletData): Promise<HydratedDocument<WalletDoc> | null> {

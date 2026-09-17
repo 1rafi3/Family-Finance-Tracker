@@ -36,6 +36,11 @@ export class ApiError extends Error {
   }
 
   static internal(message: string, details?: unknown): ApiError {
-    return new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'INTERNAL_SERVER_ERROR', message, details)
+    return new ApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'INTERNAL_SERVER_ERROR',
+      message,
+      details,
+    )
   }
 }

@@ -36,7 +36,11 @@ export class UserService {
       throw new ApiError(StatusCodes.NOT_FOUND, 'USER_NOT_FOUND', USER_ERROR_MESSAGES.NOT_FOUND)
     }
     if (!isActive && actorId === targetId) {
-      throw new ApiError(StatusCodes.CONFLICT, 'CANNOT_DEACTIVATE_SELF', USER_ERROR_MESSAGES.CANNOT_DEACTIVATE_SELF)
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        'CANNOT_DEACTIVATE_SELF',
+        USER_ERROR_MESSAGES.CANNOT_DEACTIVATE_SELF,
+      )
     }
     if (!isActive && !user.isActive) {
       throw new ApiError(StatusCodes.CONFLICT, 'USER_INACTIVE', USER_ERROR_MESSAGES.INACTIVE)

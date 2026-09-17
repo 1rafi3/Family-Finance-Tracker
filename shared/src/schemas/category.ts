@@ -8,6 +8,9 @@ export const superCategoryCreateSchema = z
   .object({
     name: nameSchema,
     type: z.nativeEnum(CategoryType),
+    icon: z.string().optional(),
+    color: z.string().optional(),
+    description: z.string().max(200).optional(),
   })
   .strict()
 
@@ -18,6 +21,10 @@ export type SuperCategoryCreateInput = z.input<typeof superCategoryCreateSchema>
 export const superCategoryUpdateSchema = z
   .object({
     name: nameSchema.optional(),
+    icon: z.string().optional(),
+    color: z.string().optional(),
+    description: z.string().max(200).optional(),
+    isArchived: z.boolean().optional(),
   })
   .strict()
 
@@ -43,6 +50,9 @@ export const subCategoryCreateSchema = z
     superCategoryId: idSchema,
     name: nameSchema,
     type: z.nativeEnum(CategoryType),
+    icon: z.string().optional(),
+    color: z.string().optional(),
+    description: z.string().max(200).optional(),
   })
   .strict()
 
@@ -53,6 +63,11 @@ export type SubCategoryCreateInput = z.input<typeof subCategoryCreateSchema>
 export const subCategoryUpdateSchema = z
   .object({
     name: nameSchema.optional(),
+    superCategoryId: idSchema.optional(),
+    icon: z.string().optional(),
+    color: z.string().optional(),
+    description: z.string().max(200).optional(),
+    isArchived: z.boolean().optional(),
   })
   .strict()
 
@@ -71,3 +86,15 @@ export const subCategorySchema: z.ZodType<SubCategory> = z.object({
   createdBy: idSchema.optional(),
   updatedBy: idSchema.optional(),
 })
+
+/** Validates category query filters. */
+export const categoryQuerySchema = z.object({
+  type: z.nativeEnum(CategoryType).optional(),
+  isArchived: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  search: z.string().optional(),
+})
+
+export type CategoryQueryInput = z.infer<typeof categoryQuerySchema>

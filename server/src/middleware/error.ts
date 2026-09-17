@@ -9,7 +9,13 @@ import { formatZodIssues } from '../utils/zodError.js'
 import type { FieldError } from '../types/api.js'
 
 export function notFound(req: Request, _res: Response, next: NextFunction): void {
-  next(new ApiError(StatusCodes.NOT_FOUND, 'NOT_FOUND', `Route not found: ${req.method} ${req.originalUrl}`))
+  next(
+    new ApiError(
+      StatusCodes.NOT_FOUND,
+      'NOT_FOUND',
+      `Route not found: ${req.method} ${req.originalUrl}`,
+    ),
+  )
 }
 
 export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
@@ -26,7 +32,11 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
 
   if (err instanceof ZodError) {
     res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      error: { code: 'VALIDATION_FAILED', message: 'Request validation failed', details: formatZodIssues(err) },
+      error: {
+        code: 'VALIDATION_FAILED',
+        message: 'Request validation failed',
+        details: formatZodIssues(err),
+      },
     })
     return
   }
@@ -75,7 +85,11 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
 }
 
 function isDuplicateKeyError(err: unknown): err is { code?: number } {
-  return err instanceof Error && typeof (err as { code?: unknown }).code === 'number' && (err as { code?: number }).code === 11000
+  return (
+    err instanceof Error &&
+    typeof (err as { code?: unknown }).code === 'number' &&
+    (err as { code?: number }).code === 11000
+  )
 }
 
 function isBodyParserError(err: unknown): err is SyntaxError & { type?: string } {

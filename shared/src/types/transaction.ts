@@ -28,6 +28,8 @@ export interface Transaction extends BaseEntity {
   subCategoryId?: Id
   /** Denormalized from `subCategoryId` for analytics; server-maintained. */
   superCategoryId?: Id
+  /** Person / Dependent on whose behalf the money was spent ("Spent For"). */
+  personId?: Id
   /** Referenced tags, zero or more. */
   tagIds: Id[]
   /** Optional free-text notes, max 500 chars. */

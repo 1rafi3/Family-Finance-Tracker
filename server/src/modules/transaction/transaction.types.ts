@@ -14,6 +14,7 @@ export interface TransactionCreateData {
   ownerId: mongoose.Types.ObjectId
   subCategoryId?: mongoose.Types.ObjectId
   superCategoryId?: mongoose.Types.ObjectId
+  personId?: mongoose.Types.ObjectId
   tagIds: mongoose.Types.ObjectId[]
   notes?: string
   date: Date
@@ -32,6 +33,7 @@ export interface TransactionDraft {
   ownerId: mongoose.Types.ObjectId
   subCategoryId?: mongoose.Types.ObjectId
   superCategoryId?: mongoose.Types.ObjectId
+  personId?: mongoose.Types.ObjectId
   tagIds: mongoose.Types.ObjectId[]
   notes?: string
   date: Date

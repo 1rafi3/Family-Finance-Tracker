@@ -1,3 +1,6 @@
 export * from './user.js'
 export * from './wallet.js'
 export * from './transaction.js'
+export * from './category.js'
+export * from './person.js'
+export * from './budget.js'

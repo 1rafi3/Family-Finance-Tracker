@@ -16,5 +16,10 @@ walletRouter.use(authenticate)
 walletRouter.post('/', validate(walletCreateSchema), walletController.create)
 walletRouter.get('/', walletController.list)
 walletRouter.get('/:id', validate(idParamSchema, 'params'), walletController.getById)
-walletRouter.patch('/:id', validate(idParamSchema, 'params'), validate(walletUpdateSchema), walletController.update)
+walletRouter.patch(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  validate(walletUpdateSchema),
+  walletController.update,
+)
 walletRouter.delete('/:id', validate(idParamSchema, 'params'), walletController.archive)

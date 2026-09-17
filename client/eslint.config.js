@@ -23,4 +23,12 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  // shadcn/ui-style primitive files intentionally co-export component variants
+  // and context objects alongside components — suppress HMR-only rule there.
+  {
+    files: ['src/components/ui/**/*.{ts,tsx}', 'src/features/auth/AuthContext.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 )

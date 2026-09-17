@@ -11,10 +11,15 @@ export function serializeTransaction(transaction: HydratedDocument<TransactionDo
     currency: transaction.currency,
     walletId: transaction.walletId ? transaction.walletId.toString() : undefined,
     sourceWalletId: transaction.sourceWalletId ? transaction.sourceWalletId.toString() : undefined,
-    destinationWalletId: transaction.destinationWalletId ? transaction.destinationWalletId.toString() : undefined,
+    destinationWalletId: transaction.destinationWalletId
+      ? transaction.destinationWalletId.toString()
+      : undefined,
     ownerId: transaction.ownerId.toString(),
     subCategoryId: transaction.subCategoryId ? transaction.subCategoryId.toString() : undefined,
-    superCategoryId: transaction.superCategoryId ? transaction.superCategoryId.toString() : undefined,
+    superCategoryId: transaction.superCategoryId
+      ? transaction.superCategoryId.toString()
+      : undefined,
+    personId: transaction.personId ? transaction.personId.toString() : undefined,
     tagIds: transaction.tagIds.map(String),
     notes: transaction.notes,
     date: transaction.date.toISOString(),

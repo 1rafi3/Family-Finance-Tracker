@@ -35,10 +35,18 @@ export class AuthService {
   async login(input: LoginInput): Promise<AuthenticatedSession> {
     const user = await this.authRepository.findByEmail(input.email)
     if (!user || !(await verifyPassword(input.password, user.passwordHash))) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'INVALID_CREDENTIALS', AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS)
+      throw new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        'INVALID_CREDENTIALS',
+        AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS,
+      )
     }
     if (!user.isActive) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'INVALID_CREDENTIALS', AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS)
+      throw new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        'INVALID_CREDENTIALS',
+        AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS,
+      )
     }
 
     user.lastLoginAt = new Date()
@@ -53,7 +61,11 @@ export class AuthService {
   async getMe(userId: string): Promise<User> {
     const user = await this.authRepository.findActiveById(userId)
     if (!user) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'TOKEN_INVALID', AUTH_ERROR_MESSAGES.TOKEN_INVALID)
+      throw new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        'TOKEN_INVALID',
+        AUTH_ERROR_MESSAGES.TOKEN_INVALID,
+      )
     }
     return serializeUser(user)
   }
@@ -61,15 +73,27 @@ export class AuthService {
   async changePassword(userId: string, input: ChangePasswordInput): Promise<void> {
     const user = await this.authRepository.findById(userId)
     if (!user) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'TOKEN_INVALID', AUTH_ERROR_MESSAGES.TOKEN_INVALID)
+      throw new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        'TOKEN_INVALID',
+        AUTH_ERROR_MESSAGES.TOKEN_INVALID,
+      )
     }
 
     const currentPasswordMatches = await verifyPassword(input.currentPassword, user.passwordHash)
     if (!currentPasswordMatches) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'PASSWORD_INCORRECT', AUTH_ERROR_MESSAGES.PASSWORD_INCORRECT)
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'PASSWORD_INCORRECT',
+        AUTH_ERROR_MESSAGES.PASSWORD_INCORRECT,
+      )
     }
     if (input.newPassword === input.currentPassword) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'PASSWORD_UNCHANGED', AUTH_ERROR_MESSAGES.PASSWORD_UNCHANGED)
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'PASSWORD_UNCHANGED',
+        AUTH_ERROR_MESSAGES.PASSWORD_UNCHANGED,
+      )
     }
 
     await this.authRepository.updatePassword(userId, await hashPassword(input.newPassword))

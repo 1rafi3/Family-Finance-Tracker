@@ -13,6 +13,7 @@ export interface TransactionDoc {
   ownerId: mongoose.Types.ObjectId
   subCategoryId?: mongoose.Types.ObjectId
   superCategoryId?: mongoose.Types.ObjectId
+  personId?: mongoose.Types.ObjectId
   tagIds: mongoose.Types.ObjectId[]
   notes?: string
   date: Date
@@ -24,15 +25,29 @@ export interface TransactionDoc {
 const transactionSchema = new mongoose.Schema<TransactionDoc>(
   {
     type: { type: String, enum: Object.values(TransactionType), required: true },
-    status: { type: String, enum: Object.values(TransactionStatus), required: true, default: TransactionStatus.COMPLETED },
+    status: {
+      type: String,
+      enum: Object.values(TransactionStatus),
+      required: true,
+      default: TransactionStatus.COMPLETED,
+    },
     amount: { type: String, required: true, default: ZERO_MONEY },
     currency: { type: String, required: true, uppercase: true, trim: true },
     walletId: { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet', default: undefined },
     sourceWalletId: { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet', default: undefined },
-    destinationWalletId: { type: mongoose.Schema.Types.ObjectId, ref: 'Wallet', default: undefined },
+    destinationWalletId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Wallet',
+      default: undefined,
+    },
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', default: undefined },
-    superCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SuperCategory', default: undefined },
+    superCategoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'SuperCategory',
+      default: undefined,
+    },
+    personId: { type: mongoose.Schema.Types.ObjectId, ref: 'Person', default: undefined },
     tagIds: { type: [mongoose.Schema.Types.ObjectId], ref: 'Tag', default: [] },
     notes: { type: String, trim: true, maxlength: 500, default: undefined },
     date: { type: Date, required: true },
@@ -58,6 +73,7 @@ transactionSchema.index({ sourceWalletId: 1 })
 transactionSchema.index({ destinationWalletId: 1 })
 transactionSchema.index({ superCategoryId: 1, date: -1 })
 transactionSchema.index({ subCategoryId: 1 })
+transactionSchema.index({ personId: 1, date: -1 })
 transactionSchema.index({ tagIds: 1, date: -1 })
 transactionSchema.index({ type: 1, date: -1 })
 transactionSchema.index({ date: -1 })

@@ -19,7 +19,14 @@ const userSchema = new mongoose.Schema<UserDoc>(
   {
     firstName: { type: String, required: true, trim: true, minlength: 1, maxlength: 50 },
     lastName: { type: String, required: true, trim: true, minlength: 1, maxlength: 50 },
-    email: { type: String, required: true, unique: true, trim: true, lowercase: true, maxlength: 254 },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      maxlength: 254,
+    },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: Object.values(UserRole), default: UserRole.MEMBER, required: true },
     isActive: { type: Boolean, default: true, required: true },

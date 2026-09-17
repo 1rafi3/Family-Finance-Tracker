@@ -21,6 +21,7 @@ interface TransactionShapeInput {
   sourceWalletId?: Id
   destinationWalletId?: Id
   subCategoryId?: Id
+  personId?: Id
 }
 
 /**
@@ -84,6 +85,7 @@ const transactionShape = {
   destinationWalletId: idSchema.optional(),
   ownerId: idSchema,
   subCategoryId: idSchema.optional(),
+  personId: idSchema.optional(),
   tagIds: z.array(idSchema),
   notes: notesSchema.optional(),
   date: dateSchema,
@@ -126,6 +128,7 @@ export const transactionSchema: z.ZodType<Transaction> = z.object({
   ownerId: idSchema,
   subCategoryId: idSchema.optional(),
   superCategoryId: idSchema.optional(),
+  personId: idSchema.optional(),
   tagIds: z.array(idSchema),
   notes: notesSchema.optional(),
   date: dateSchema,

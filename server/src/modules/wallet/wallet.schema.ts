@@ -21,7 +21,10 @@ export const walletUpdateSchema = z
   .strict()
   .superRefine((data, ctx) => {
     if (data.name === undefined && data.type === undefined && data.currency === undefined) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide at least one of name, type or currency' })
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Provide at least one of name, type or currency',
+      })
     }
   })
 

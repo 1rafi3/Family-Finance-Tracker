@@ -13,5 +13,10 @@ export const authRouter = Router()
 authRouter.post('/register', validate(registerSchema), authController.register)
 authRouter.post('/login', validate(loginSchema), authController.login)
 authRouter.get('/me', authenticate, authController.me)
-authRouter.patch('/password', authenticate, validate(changePasswordSchema), authController.changePassword)
+authRouter.patch(
+  '/password',
+  authenticate,
+  validate(changePasswordSchema),
+  authController.changePassword,
+)
 authRouter.post('/logout', authenticate, authController.logout)

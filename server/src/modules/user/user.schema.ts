@@ -9,7 +9,10 @@ export const updateProfileSchema = z
   .strict()
   .superRefine((data, ctx) => {
     if (data.firstName === undefined && data.lastName === undefined) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Provide at least one of firstName or lastName' })
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Provide at least one of firstName or lastName',
+      })
     }
   })
 

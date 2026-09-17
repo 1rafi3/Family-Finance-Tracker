@@ -12,13 +12,19 @@ export interface AccessTokenPayload {
 }
 
 export function signAccessToken(payload: AccessTokenPayload): string {
-  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'] })
+  return jwt.sign(payload, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'],
+  })
 }
 
 export function verifyAccessToken(token: string): AccessTokenPayload {
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET)
-    if (typeof decoded === 'string' || typeof decoded.sub !== 'string' || typeof decoded.role !== 'string') {
+    if (
+      typeof decoded === 'string' ||
+      typeof decoded.sub !== 'string' ||
+      typeof decoded.role !== 'string'
+    ) {
       throw new Error('Unexpected token payload')
     }
     return { sub: decoded.sub, role: decoded.role as UserRole }

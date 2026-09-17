@@ -14,12 +14,16 @@
   "dependencies": {
     "@family-finance/shared": "0.1.0",
     "@tanstack/react-query": "^5.51.23",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.3.31",
+    "lucide-react": "^1.28.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.53.0",
     "react-router": "^8.0.0",
     "recharts": "^3.0.0",
+    "tailwind-merge": "^3.6.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -67,7 +67,12 @@ export class WalletService {
     return serializeWallet(archived)
   }
 
-  async increaseBalance(walletId: string, amount: Money, session?: ClientSession, options: BalanceAdjustOptions = {}): Promise<void> {
+  async increaseBalance(
+    walletId: string,
+    amount: Money,
+    session?: ClientSession,
+    options: BalanceAdjustOptions = {},
+  ): Promise<void> {
     const wallet = session
       ? await this.walletRepository.findByIdWithSession(walletId, session)
       : await this.walletRepository.findById(walletId)
@@ -81,7 +86,12 @@ export class WalletService {
     await wallet.save(session ? { session } : undefined)
   }
 
-  async decreaseBalance(walletId: string, amount: Money, session?: ClientSession, options: BalanceAdjustOptions = {}): Promise<void> {
+  async decreaseBalance(
+    walletId: string,
+    amount: Money,
+    session?: ClientSession,
+    options: BalanceAdjustOptions = {},
+  ): Promise<void> {
     const wallet = session
       ? await this.walletRepository.findByIdWithSession(walletId, session)
       : await this.walletRepository.findById(walletId)
@@ -95,12 +105,19 @@ export class WalletService {
     await wallet.save(session ? { session } : undefined)
   }
 
-  private requireOwnWallet(actorId: string, wallet: HydratedDocument<WalletDoc> | null): HydratedDocument<WalletDoc> {
+  private requireOwnWallet(
+    actorId: string,
+    wallet: HydratedDocument<WalletDoc> | null,
+  ): HydratedDocument<WalletDoc> {
     if (!wallet) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'WALLET_NOT_FOUND', 'Wallet not found')
     }
     if (wallet.ownerId.toString() !== actorId) {
-      throw new ApiError(StatusCodes.FORBIDDEN, 'FORBIDDEN', 'You do not have access to this wallet')
+      throw new ApiError(
+        StatusCodes.FORBIDDEN,
+        'FORBIDDEN',
+        'You do not have access to this wallet',
+      )
     }
     return wallet
   }

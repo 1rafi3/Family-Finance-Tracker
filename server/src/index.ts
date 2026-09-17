@@ -37,7 +37,9 @@ async function startServer(): Promise<void> {
       }
       void disconnectDatabase()
         .catch((error: unknown) => {
-          logger.error('Error while disconnecting database', { error: error instanceof Error ? error.message : String(error) })
+          logger.error('Error while disconnecting database', {
+            error: error instanceof Error ? error.message : String(error),
+          })
         })
         .finally(() => process.exit(0))
     })
@@ -47,7 +49,9 @@ async function startServer(): Promise<void> {
   process.on('SIGTERM', () => shutdown('SIGTERM'))
 
   process.on('unhandledRejection', (reason) => {
-    logger.error('Unhandled promise rejection', { reason: reason instanceof Error ? reason.message : String(reason) })
+    logger.error('Unhandled promise rejection', {
+      reason: reason instanceof Error ? reason.message : String(reason),
+    })
     process.exit(1)
   })
 
@@ -58,6 +62,8 @@ async function startServer(): Promise<void> {
 }
 
 void startServer().catch((error: unknown) => {
-  logger.error('Failed to start server', { error: error instanceof Error ? error.message : String(error) })
+  logger.error('Failed to start server', {
+    error: error instanceof Error ? error.message : String(error),
+  })
   process.exit(1)
 })

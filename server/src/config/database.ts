@@ -22,7 +22,9 @@ export function configureDatabaseEvents(): void {
   mongoose.connection.on('disconnected', () => logger.warn('MongoDB disconnected'))
   mongoose.connection.on('reconnected', () => logger.info('MongoDB reconnected'))
   mongoose.connection.on('error', (error) => {
-    logger.error('MongoDB connection error', { error: error instanceof Error ? error.message : String(error) })
+    logger.error('MongoDB connection error', {
+      error: error instanceof Error ? error.message : String(error),
+    })
   })
 }
 
@@ -40,7 +42,9 @@ export async function connectDatabase(options: DatabaseConnectionOptions = {}): 
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       if (attempt < retries) {
-        logger.warn(`MongoDB connection attempt ${attempt}/${retries} failed, retrying`, { error: message })
+        logger.warn(`MongoDB connection attempt ${attempt}/${retries} failed, retrying`, {
+          error: message,
+        })
         await delay(retryDelayMs)
       } else {
         logger.error(`MongoDB connection failed after ${retries} attempts`, { error: message })
@@ -55,7 +59,10 @@ export function isDatabaseConnected(): boolean {
 }
 
 export function getDatabaseStatus(): { state: number; status: string } {
-  return { state: mongoose.connection.readyState, status: DATABASE_STATES[mongoose.connection.readyState] }
+  return {
+    state: mongoose.connection.readyState,
+    status: DATABASE_STATES[mongoose.connection.readyState],
+  }
 }
 
 export async function disconnectDatabase(): Promise<void> {

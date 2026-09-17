@@ -28,7 +28,10 @@ export abstract class BaseRepository<T> {
     return this.model.findOne(filter).exec()
   }
 
-  async findMany(filter: FilterQuery<T>, options: FindManyOptions = {}): Promise<HydratedDocument<T>[]> {
+  async findMany(
+    filter: FilterQuery<T>,
+    options: FindManyOptions = {},
+  ): Promise<HydratedDocument<T>[]> {
     let query = this.model.find(filter)
     if (options.sort) {
       query = query.sort(options.sort)
@@ -58,7 +61,10 @@ export abstract class BaseRepository<T> {
     return this.model.countDocuments(filter).exec()
   }
 
-  async paginate(filter: FilterQuery<T>, options: PaginateOptions): Promise<PaginatedResult<HydratedDocument<T>>> {
+  async paginate(
+    filter: FilterQuery<T>,
+    options: PaginateOptions,
+  ): Promise<PaginatedResult<HydratedDocument<T>>> {
     const page = Math.max(1, Math.floor(options.page))
     const limit = Math.min(Math.max(1, Math.floor(options.limit)), MAX_PAGE_LIMIT)
     const [items, total] = await Promise.all([

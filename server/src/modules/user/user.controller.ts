@@ -37,7 +37,11 @@ export class UserController {
     if (!req.user) {
       throw ApiError.unauthorized(AUTH_ERROR_MESSAGES.AUTH_REQUIRED)
     }
-    const user = await this.userService.setActiveStatus(req.user.id, req.params.id, (req.body as UpdateStatusInput).isActive)
+    const user = await this.userService.setActiveStatus(
+      req.user.id,
+      req.params.id,
+      (req.body as UpdateStatusInput).isActive,
+    )
     res.status(StatusCodes.OK).json(success({ user }))
   })
 }

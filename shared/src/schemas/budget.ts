@@ -30,8 +30,25 @@ function validateBudgetPeriod(data: BudgetPeriodInput, ctx: z.RefinementCtx): vo
   }
 }
 
+function validateBudgetTarget(
+  data: { superCategoryId?: string; subCategoryId?: string; personId?: string },
+  ctx: z.RefinementCtx,
+): void {
+  if (!data.superCategoryId && !data.subCategoryId && !data.personId) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['superCategoryId'],
+      message: 'Either a Category or a Person must be selected',
+    })
+  }
+}
+
 const budgetShape = {
-  superCategoryId: idSchema,
+  name: z.string().trim().max(100).optional(),
+  targetType: z.enum(['CATEGORY', 'PERSON']).default('CATEGORY'),
+  superCategoryId: idSchema.optional(),
+  subCategoryId: idSchema.optional(),
+  personId: idSchema.optional(),
   amount: positiveMoneySchema,
   currency: currencySchema,
   period: z.nativeEnum(BudgetPeriod),
@@ -39,7 +56,7 @@ const budgetShape = {
   periodMonth: periodMonthSchema.optional(),
 }
 
-/** Validates creation of a budget (one active per SuperCategory per period). */
+/** Validates creation of a budget or person allowance. */
 export const budgetCreateSchema = z
   .object({
     ...budgetShape,
@@ -48,6 +65,7 @@ export const budgetCreateSchema = z
   })
   .strict()
   .superRefine(validateBudgetPeriod)
+  .superRefine(validateBudgetTarget)
 
 /** Input type of {@link budgetCreateSchema}. */
 export type BudgetCreateInput = z.input<typeof budgetCreateSchema>
@@ -62,10 +80,26 @@ export const budgetUpdateSchema = z
 /** Input type of {@link budgetUpdateSchema}. */
 export type BudgetUpdateInput = z.input<typeof budgetUpdateSchema>
 
+/** Validates query params for listing budgets. */
+export const budgetQuerySchema = z.object({
+  year: periodYearSchema.optional(),
+  month: periodMonthSchema.optional(),
+  includeArchived: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true'),
+})
+export type BudgetQueryInput = z.infer<typeof budgetQuerySchema>
+
 /** Validates a `Budget` resource. */
 export const budgetSchema: z.ZodType<Budget> = z.object({
   id: idSchema,
-  superCategoryId: idSchema,
+  ownerId: idSchema,
+  name: z.string().optional(),
+  targetType: z.enum(['CATEGORY', 'PERSON']),
+  superCategoryId: idSchema.optional(),
+  subCategoryId: idSchema.optional(),
+  personId: idSchema.optional(),
   amount: positiveMoneySchema,
   currency: currencySchema,
   period: z.nativeEnum(BudgetPeriod),

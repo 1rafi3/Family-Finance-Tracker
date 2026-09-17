@@ -2,9 +2,11 @@ import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
+const rootDir = fileURLToPath(new URL('.', import.meta.url))
 const src = (path: string): string => fileURLToPath(new URL(`./src/${path}`, import.meta.url))
 
 export default defineConfig({
+  root: rootDir,
   plugins: [react()],
   resolve: {
     alias: {

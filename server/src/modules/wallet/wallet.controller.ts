@@ -12,7 +12,10 @@ export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
   create = asyncHandler(async (req: Request, res: Response) => {
-    const wallet = await this.walletService.createWallet(this.requireUser(req).id, req.body as WalletCreateInput)
+    const wallet = await this.walletService.createWallet(
+      this.requireUser(req).id,
+      req.body as WalletCreateInput,
+    )
     res.status(StatusCodes.CREATED).json(success({ wallet }))
   })
 
@@ -27,7 +30,11 @@ export class WalletController {
   })
 
   update = asyncHandler(async (req: Request, res: Response) => {
-    const wallet = await this.walletService.updateWallet(this.requireUser(req).id, req.params.id, req.body as WalletUpdateInput)
+    const wallet = await this.walletService.updateWallet(
+      this.requireUser(req).id,
+      req.params.id,
+      req.body as WalletUpdateInput,
+    )
     res.status(StatusCodes.OK).json(success({ wallet }))
   })
 

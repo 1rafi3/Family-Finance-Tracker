@@ -6,13 +6,20 @@ import { asyncHandler } from '../../utils/asyncHandler.js'
 import { paginatedCursor, success } from '../../utils/ApiResponse.js'
 import { AUTH_ERROR_MESSAGES } from '../auth/auth.constants.js'
 import type { TransactionService } from './transaction.service.js'
-import type { TransactionCreateInput, TransactionListQuery, TransactionUpdateInput } from './transaction.schema.js'
+import type {
+  TransactionCreateInput,
+  TransactionListQuery,
+  TransactionUpdateInput,
+} from './transaction.schema.js'
 
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   create = asyncHandler(async (req: Request, res: Response) => {
-    const transaction = await this.transactionService.createTransaction(this.requireUser(req), req.body as TransactionCreateInput)
+    const transaction = await this.transactionService.createTransaction(
+      this.requireUser(req),
+      req.body as TransactionCreateInput,
+    )
     res.status(StatusCodes.CREATED).json(success({ transaction }))
   })
 
@@ -25,7 +32,10 @@ export class TransactionController {
   })
 
   getById = asyncHandler(async (req: Request, res: Response) => {
-    const transaction = await this.transactionService.getTransaction(this.requireUser(req), req.params.id)
+    const transaction = await this.transactionService.getTransaction(
+      this.requireUser(req),
+      req.params.id,
+    )
     res.status(StatusCodes.OK).json(success({ transaction }))
   })
 
@@ -39,7 +49,10 @@ export class TransactionController {
   })
 
   void = asyncHandler(async (req: Request, res: Response) => {
-    const transaction = await this.transactionService.voidTransaction(this.requireUser(req), req.params.id)
+    const transaction = await this.transactionService.voidTransaction(
+      this.requireUser(req),
+      req.params.id,
+    )
     res.status(StatusCodes.OK).json(success({ transaction }))
   })
 

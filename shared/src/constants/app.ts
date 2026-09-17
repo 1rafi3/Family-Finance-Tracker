@@ -1,7 +1,7 @@
 import { BudgetPeriod, SavingsGoalStatus, TransactionStatus, UserRole } from '../enums/index.js'
 
 /** Application display name. */
-export const APP_NAME = 'Family Finance Tracker'
+export const APP_NAME = 'FinFlow'
 
 /** Default role assigned when a new user is created without an explicit role. */
 export const DEFAULT_USER_ROLE = UserRole.MEMBER
@@ -10,10 +10,34 @@ export const DEFAULT_USER_ROLE = UserRole.MEMBER
 export const DEFAULT_WALLET_TYPE = 'cash'
 
 /**
- * Recommended wallet-type vocabulary. Additional types are allowed by design —
+ * Recommended wallet/account-type vocabulary. Additional types are allowed by design —
  * wallet `type` is a free-form string (domain model §3.2).
  */
-export const WALLET_TYPES = ['cash', 'bank', 'bkash', 'nagad', 'rocket', 'houseCash'] as const
+export const WALLET_TYPES = [
+  'cash',
+  'bank',
+  'bkash',
+  'nagad',
+  'rocket',
+  'creditCard',
+  'investment',
+  'savings',
+] as const
+
+/**
+ * Common relationship categories for dependent / beneficiary tracking.
+ */
+export const PERSON_RELATIONSHIPS = [
+  'Child',
+  'Parent',
+  'Spouse',
+  'Sibling',
+  'Relative',
+  'Friend',
+  'Pet',
+  'Colleague',
+  'Other',
+] as const
 
 /** Default status applied to newly created transactions. */
 export const DEFAULT_TRANSACTION_STATUS = TransactionStatus.COMPLETED

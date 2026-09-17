@@ -1,5 +1,11 @@
 import { z } from 'zod'
-import { changePasswordSchema, emailSchema, loginSchema, nameSchema, passwordSchema } from '@family-finance/shared'
+import {
+  changePasswordSchema,
+  emailSchema,
+  loginSchema,
+  nameSchema,
+  passwordSchema,
+} from '@family-finance/shared'
 import type { ChangePasswordInput, LoginInput } from '@family-finance/shared'
 
 export const registerSchema = z

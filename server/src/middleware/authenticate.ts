@@ -7,7 +7,11 @@ import { AUTH_ERROR_MESSAGES } from '../modules/auth/auth.constants.js'
 
 const BEARER_PREFIX = 'Bearer '
 
-export async function authenticate(req: Request, _res: Response, next: NextFunction): Promise<void> {
+export async function authenticate(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const authorization = req.headers.authorization
 

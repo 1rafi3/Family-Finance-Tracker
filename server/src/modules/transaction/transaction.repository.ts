@@ -18,6 +18,7 @@ export interface TransactionListFilter {
   walletId?: Id
   superCategoryId?: Id
   subCategoryId?: Id
+  personId?: Id
   tagIds?: Id[]
   dateFrom?: Date
   dateTo?: Date
@@ -34,7 +35,9 @@ export interface TransactionListResult {
 }
 
 export function encodeCursor(cursor: DecodedCursor): string {
-  return Buffer.from(JSON.stringify({ date: cursor.date.toISOString(), id: cursor.id })).toString('base64')
+  return Buffer.from(JSON.stringify({ date: cursor.date.toISOString(), id: cursor.id })).toString(
+    'base64',
+  )
 }
 
 export function decodeCursor(cursor: string): DecodedCursor | null {
@@ -58,11 +61,17 @@ export class TransactionRepository extends BaseRepository<TransactionDoc> {
     super(TransactionModel)
   }
 
-  createWithSession(data: Partial<TransactionDoc>, session: ClientSession): Promise<HydratedDocument<TransactionDoc>> {
+  createWithSession(
+    data: Partial<TransactionDoc>,
+    session: ClientSession,
+  ): Promise<HydratedDocument<TransactionDoc>> {
     return this.model.create([data], { session }).then((docs) => docs[0])
   }
 
-  findByIdWithSession(id: Id, session: ClientSession): Promise<HydratedDocument<TransactionDoc> | null> {
+  findByIdWithSession(
+    id: Id,
+    session: ClientSession,
+  ): Promise<HydratedDocument<TransactionDoc> | null> {
     return this.model.findById(id).session(session).exec()
   }
 
@@ -71,29 +80,44 @@ export class TransactionRepository extends BaseRepository<TransactionDoc> {
     update: UpdateQuery<TransactionDoc>,
     session: ClientSession,
   ): Promise<HydratedDocument<TransactionDoc> | null> {
-    return this.model.findByIdAndUpdate(id, update, { new: true, runValidators: true, session }).exec()
+    return this.model
+      .findByIdAndUpdate(id, update, { new: true, runValidators: true, session })
+      .exec()
   }
 
   /**
    * Cursor-paged list ordered by `date` descending then `_id` (API contract
    * §7.1). The optional cursor points to the last item of the previous page.
    */
-  async listCursor(filter: TransactionListFilter, limit: number, cursor: DecodedCursor | null): Promise<TransactionListResult> {
+  async listCursor(
+    filter: TransactionListFilter,
+    limit: number,
+    cursor: DecodedCursor | null,
+  ): Promise<TransactionListResult> {
     const baseFilter = this.buildFilter(filter)
     const conditions: FilterQuery<TransactionDoc>[] = [...baseFilter]
 
     if (cursor) {
       conditions.push({
-        $or: [{ date: { $lt: cursor.date } }, { date: cursor.date, _id: { $lt: new mongoose.Types.ObjectId(cursor.id) } }],
+        $or: [
+          { date: { $lt: cursor.date } },
+          { date: cursor.date, _id: { $lt: new mongoose.Types.ObjectId(cursor.id) } },
+        ],
       })
     }
 
-    const query = this.model.find(conditions)
-    const fetched = await query.sort({ date: -1, _id: -1 }).limit(limit + 1).exec()
+    const queryFilter = toFilterQuery(conditions)
+    const countFilter = toFilterQuery(baseFilter)
+
+    const query = this.model.find(queryFilter)
+    const fetched = await query
+      .sort({ date: -1, _id: -1 })
+      .limit(limit + 1)
+      .exec()
     const hasMore = fetched.length > limit
     const items = hasMore ? fetched.slice(0, limit) : fetched
 
-    const total = await this.model.countDocuments(baseFilter).exec()
+    const total = await this.model.countDocuments(countFilter).exec()
     const last = items[items.length - 1]
     const nextCursor = hasMore && last ? encodeCursor({ date: last.date, id: last.id }) : null
 
@@ -114,7 +138,11 @@ export class TransactionRepository extends BaseRepository<TransactionDoc> {
     }
     if (filter.walletId) {
       conditions.push({
-        $or: [{ walletId: filter.walletId }, { sourceWalletId: filter.walletId }, { destinationWalletId: filter.walletId }],
+        $or: [
+          { walletId: filter.walletId },
+          { sourceWalletId: filter.walletId },
+          { destinationWalletId: filter.walletId },
+        ],
       })
     }
     if (filter.superCategoryId) {
@@ -122,6 +150,9 @@ export class TransactionRepository extends BaseRepository<TransactionDoc> {
     }
     if (filter.subCategoryId) {
       conditions.push({ subCategoryId: filter.subCategoryId })
+    }
+    if (filter.personId) {
+      conditions.push({ personId: new mongoose.Types.ObjectId(filter.personId) })
     }
     if (filter.tagIds && filter.tagIds.length > 0) {
       conditions.push({ tagIds: { $in: filter.tagIds } })
@@ -160,3 +191,10 @@ export class TransactionRepository extends BaseRepository<TransactionDoc> {
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
+
+function toFilterQuery(conditions: FilterQuery<TransactionDoc>[]): FilterQuery<TransactionDoc> {
+  if (conditions.length === 0) return {}
+  if (conditions.length === 1) return conditions[0]
+  return { $and: conditions }
+}
+

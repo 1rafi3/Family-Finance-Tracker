@@ -14,7 +14,10 @@ export function resolvePagination(query: { page?: unknown; limit?: unknown }): P
   return { page, limit }
 }
 
-export function resolveSort(value: unknown, allowedFields: readonly string[]): Record<string, SortDirection> {
+export function resolveSort(
+  value: unknown,
+  allowedFields: readonly string[],
+): Record<string, SortDirection> {
   if (typeof value !== 'string' || value.length === 0) {
     return {}
   }

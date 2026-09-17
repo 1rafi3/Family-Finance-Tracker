@@ -11,6 +11,12 @@ export interface SuperCategory extends ArchivableEntity {
   name: string
   /** `INCOME` or `EXPENSE`; fixed at creation. */
   type: CategoryType
+  /** Visual icon identifier */
+  icon?: string
+  /** Visual color hex accent */
+  color?: string
+  /** Short notes or purpose */
+  description?: string
   /** `true` for system-seeded categories. */
   isSystem: boolean
 }
@@ -27,4 +33,10 @@ export interface SubCategory extends ArchivableEntity {
   name: string
   /** Must equal the parent SuperCategory's `type`. */
   type: CategoryType
+  /** Visual icon identifier */
+  icon?: string
+  /** Visual color hex accent */
+  color?: string
+  /** Short notes or purpose */
+  description?: string
 }

@@ -12,8 +12,16 @@ import { serializeTransaction } from './transaction.serializer.js'
 import { TRANSACTION_ERROR_MESSAGES } from './transaction.constants.js'
 import type { TransactionRepository, TransactionListFilter } from './transaction.repository.js'
 import { decodeCursor } from './transaction.repository.js'
-import type { TransactionCreateInput, TransactionListQuery, TransactionUpdateInput } from './transaction.schema.js'
-import type { BalanceAdjustment, TransactionCreateData, TransactionDraft } from './transaction.types.js'
+import type {
+  TransactionCreateInput,
+  TransactionListQuery,
+  TransactionUpdateInput,
+} from './transaction.schema.js'
+import type {
+  BalanceAdjustment,
+  TransactionCreateData,
+  TransactionDraft,
+} from './transaction.types.js'
 
 /** The fields of a transaction that drive balance effects. */
 interface BalanceEffectSource {
@@ -54,25 +62,44 @@ export class TransactionService {
     }
   }
 
-  async listTransactions(actor: User, query: TransactionListQuery): Promise<{ data: Transaction[]; pagination: CursorPaginationMeta }> {
+  async listTransactions(
+    actor: User,
+    query: TransactionListQuery,
+  ): Promise<{ data: Transaction[]; pagination: CursorPaginationMeta }> {
     const filter = this.buildFilter(actor, query)
     const cursor = query.cursor ? decodeCursor(query.cursor) : null
     if (query.cursor && !cursor) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'INVALID_CURSOR', TRANSACTION_ERROR_MESSAGES.INVALID_CURSOR)
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'INVALID_CURSOR',
+        TRANSACTION_ERROR_MESSAGES.INVALID_CURSOR,
+      )
     }
     const result = await this.transactionRepository.listCursor(filter, query.limit, cursor)
     return {
       data: result.items.map(serializeTransaction),
-      pagination: { limit: query.limit, total: result.total, hasMore: result.hasMore, nextCursor: result.nextCursor },
+      pagination: {
+        limit: query.limit,
+        total: result.total,
+        hasMore: result.hasMore,
+        nextCursor: result.nextCursor,
+      },
     }
   }
 
   async getTransaction(actor: User, transactionId: string): Promise<Transaction> {
-    const transaction = this.requireReadable(actor, await this.transactionRepository.findById(transactionId))
+    const transaction = this.requireReadable(
+      actor,
+      await this.transactionRepository.findById(transactionId),
+    )
     return serializeTransaction(transaction)
   }
 
-  async updateTransaction(actor: User, transactionId: string, input: TransactionUpdateInput): Promise<Transaction> {
+  async updateTransaction(
+    actor: User,
+    transactionId: string,
+    input: TransactionUpdateInput,
+  ): Promise<Transaction> {
     if (input.ownerId) {
       this.assertOwnerEligibility(actor, input.ownerId)
     }
@@ -80,7 +107,10 @@ export class TransactionService {
     const session = await mongoose.startSession()
     try {
       session.startTransaction()
-      const existing = this.requireModifiable(actor, await this.transactionRepository.findByIdWithSession(transactionId, session))
+      const existing = this.requireModifiable(
+        actor,
+        await this.transactionRepository.findByIdWithSession(transactionId, session),
+      )
       const merged = this.mergeUpdate(existing, input)
       await this.validateWallets(merged)
 
@@ -91,7 +121,11 @@ export class TransactionService {
         session,
       )
       if (!updated) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'TRANSACTION_NOT_FOUND', TRANSACTION_ERROR_MESSAGES.NOT_FOUND)
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          'TRANSACTION_NOT_FOUND',
+          TRANSACTION_ERROR_MESSAGES.NOT_FOUND,
+        )
       }
 
       await this.reverseEffect(session, oldEffect)
@@ -110,14 +144,21 @@ export class TransactionService {
     const session = await mongoose.startSession()
     try {
       session.startTransaction()
-      const existing = this.requireModifiable(actor, await this.transactionRepository.findByIdWithSession(transactionId, session))
+      const existing = this.requireModifiable(
+        actor,
+        await this.transactionRepository.findByIdWithSession(transactionId, session),
+      )
       const updated = await this.transactionRepository.updateByIdWithSession(
         transactionId,
         { $set: { status: TransactionStatus.CANCELLED } },
         session,
       )
       if (!updated) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'TRANSACTION_NOT_FOUND', TRANSACTION_ERROR_MESSAGES.NOT_FOUND)
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          'TRANSACTION_NOT_FOUND',
+          TRANSACTION_ERROR_MESSAGES.NOT_FOUND,
+        )
       }
 
       await this.reverseEffect(session, this.getBalanceEffect(existing))
@@ -145,9 +186,16 @@ export class TransactionService {
       currency: input.currency,
       ownerId: new mongoose.Types.ObjectId(input.ownerId),
       walletId: input.walletId ? new mongoose.Types.ObjectId(input.walletId) : undefined,
-      sourceWalletId: input.sourceWalletId ? new mongoose.Types.ObjectId(input.sourceWalletId) : undefined,
-      destinationWalletId: input.destinationWalletId ? new mongoose.Types.ObjectId(input.destinationWalletId) : undefined,
-      subCategoryId: input.subCategoryId ? new mongoose.Types.ObjectId(input.subCategoryId) : undefined,
+      sourceWalletId: input.sourceWalletId
+        ? new mongoose.Types.ObjectId(input.sourceWalletId)
+        : undefined,
+      destinationWalletId: input.destinationWalletId
+        ? new mongoose.Types.ObjectId(input.destinationWalletId)
+        : undefined,
+      subCategoryId: input.subCategoryId
+        ? new mongoose.Types.ObjectId(input.subCategoryId)
+        : undefined,
+      personId: input.personId ? new mongoose.Types.ObjectId(input.personId) : undefined,
       tagIds: input.tagIds.map((tagId) => new mongoose.Types.ObjectId(tagId)),
       notes: input.notes,
       date: new Date(input.date),
@@ -155,7 +203,10 @@ export class TransactionService {
     }
   }
 
-  private mergeUpdate(existing: HydratedDocument<TransactionDoc>, input: TransactionUpdateInput): TransactionDraft {
+  private mergeUpdate(
+    existing: HydratedDocument<TransactionDoc>,
+    input: TransactionUpdateInput,
+  ): TransactionDraft {
     return {
       type: input.type ?? existing.type,
       status: input.status ?? existing.status,
@@ -163,12 +214,24 @@ export class TransactionService {
       currency: input.currency ?? existing.currency,
       ownerId: input.ownerId ? new mongoose.Types.ObjectId(input.ownerId) : existing.ownerId,
       walletId: input.walletId ? new mongoose.Types.ObjectId(input.walletId) : existing.walletId,
-      sourceWalletId: input.sourceWalletId ? new mongoose.Types.ObjectId(input.sourceWalletId) : existing.sourceWalletId,
+      sourceWalletId: input.sourceWalletId
+        ? new mongoose.Types.ObjectId(input.sourceWalletId)
+        : existing.sourceWalletId,
       destinationWalletId: input.destinationWalletId
         ? new mongoose.Types.ObjectId(input.destinationWalletId)
         : existing.destinationWalletId,
-      subCategoryId: input.subCategoryId ? new mongoose.Types.ObjectId(input.subCategoryId) : existing.subCategoryId,
-      tagIds: input.tagIds ? input.tagIds.map((tagId) => new mongoose.Types.ObjectId(tagId)) : existing.tagIds,
+      subCategoryId: input.subCategoryId
+        ? new mongoose.Types.ObjectId(input.subCategoryId)
+        : existing.subCategoryId,
+      personId:
+        input.personId !== undefined
+          ? input.personId
+            ? new mongoose.Types.ObjectId(input.personId)
+            : undefined
+          : existing.personId,
+      tagIds: input.tagIds
+        ? input.tagIds.map((tagId) => new mongoose.Types.ObjectId(tagId))
+        : existing.tagIds,
       notes: input.notes !== undefined ? input.notes : existing.notes,
       date: input.date ? new Date(input.date) : existing.date,
     }
@@ -185,12 +248,24 @@ export class TransactionService {
       date: merged.date,
     }
     const $unset: Record<string, unknown> = {}
-    const optionalFields: Array<keyof Pick<TransactionDraft, 'walletId' | 'sourceWalletId' | 'destinationWalletId' | 'subCategoryId' | 'superCategoryId' | 'notes'>> = [
+    const optionalFields: Array<
+      keyof Pick<
+        TransactionDraft,
+        | 'walletId'
+        | 'sourceWalletId'
+        | 'destinationWalletId'
+        | 'subCategoryId'
+        | 'superCategoryId'
+        | 'personId'
+        | 'notes'
+      >
+    > = [
       'walletId',
       'sourceWalletId',
       'destinationWalletId',
       'subCategoryId',
       'superCategoryId',
+      'personId',
       'notes',
     ]
     for (const field of optionalFields) {
@@ -225,13 +300,25 @@ export class TransactionService {
   private async assertWalletActiveForOwner(ownerId: string, walletId: string): Promise<void> {
     const wallet = await this.walletRepository.findById(walletId)
     if (!wallet) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'WALLET_NOT_FOUND', TRANSACTION_ERROR_MESSAGES.WALLET_NOT_FOUND)
+      throw new ApiError(
+        StatusCodes.NOT_FOUND,
+        'WALLET_NOT_FOUND',
+        TRANSACTION_ERROR_MESSAGES.WALLET_NOT_FOUND,
+      )
     }
     if (wallet.ownerId.toString() !== ownerId) {
-      throw new ApiError(StatusCodes.FORBIDDEN, 'FORBIDDEN', TRANSACTION_ERROR_MESSAGES.WALLET_FORBIDDEN)
+      throw new ApiError(
+        StatusCodes.FORBIDDEN,
+        'FORBIDDEN',
+        TRANSACTION_ERROR_MESSAGES.WALLET_FORBIDDEN,
+      )
     }
     if (wallet.isArchived) {
-      throw new ApiError(StatusCodes.CONFLICT, 'WALLET_ARCHIVED', TRANSACTION_ERROR_MESSAGES.WALLET_ARCHIVED)
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        'WALLET_ARCHIVED',
+        TRANSACTION_ERROR_MESSAGES.WALLET_ARCHIVED,
+      )
     }
   }
 
@@ -245,7 +332,11 @@ export class TransactionService {
     if (source.type === TransactionType.EXPENSE && source.walletId) {
       return [{ walletId: source.walletId.toString(), amount: source.amount, direction: -1 }]
     }
-    if (source.type === TransactionType.TRANSFER && source.sourceWalletId && source.destinationWalletId) {
+    if (
+      source.type === TransactionType.TRANSFER &&
+      source.sourceWalletId &&
+      source.destinationWalletId
+    ) {
       return [
         { walletId: source.sourceWalletId.toString(), amount: source.amount, direction: -1 },
         { walletId: source.destinationWalletId.toString(), amount: source.amount, direction: 1 },
@@ -254,7 +345,10 @@ export class TransactionService {
     return []
   }
 
-  private async applyEffect(session: ClientSession, adjustments: BalanceAdjustment[]): Promise<void> {
+  private async applyEffect(
+    session: ClientSession,
+    adjustments: BalanceAdjustment[],
+  ): Promise<void> {
     for (const adjustment of adjustments) {
       if (adjustment.direction === 1) {
         await this.walletService.increaseBalance(adjustment.walletId, adjustment.amount, session)
@@ -264,12 +358,19 @@ export class TransactionService {
     }
   }
 
-  private async reverseEffect(session: ClientSession, adjustments: BalanceAdjustment[]): Promise<void> {
+  private async reverseEffect(
+    session: ClientSession,
+    adjustments: BalanceAdjustment[],
+  ): Promise<void> {
     for (const adjustment of adjustments) {
       if (adjustment.direction === 1) {
-        await this.walletService.decreaseBalance(adjustment.walletId, adjustment.amount, session, { skipArchivedCheck: true })
+        await this.walletService.decreaseBalance(adjustment.walletId, adjustment.amount, session, {
+          skipArchivedCheck: true,
+        })
       } else {
-        await this.walletService.increaseBalance(adjustment.walletId, adjustment.amount, session, { skipArchivedCheck: true })
+        await this.walletService.increaseBalance(adjustment.walletId, adjustment.amount, session, {
+          skipArchivedCheck: true,
+        })
       }
     }
   }
@@ -297,12 +398,26 @@ export class TransactionService {
     if (query.subCategoryId) {
       filter.subCategoryId = query.subCategoryId
     }
+    if (query.personId) {
+      filter.personId = query.personId
+    }
     if (query.tagIds) {
-      filter.tagIds = query.tagIds.split(',').map((id) => id.trim()).filter(Boolean)
+      filter.tagIds = query.tagIds
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean)
     }
     if (query.dateFrom || query.dateTo) {
-      if (query.dateFrom && query.dateTo && resolveQueryDate(query.dateFrom) > resolveQueryDate(query.dateTo)) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, 'DATE_RANGE_INVALID', TRANSACTION_ERROR_MESSAGES.DATE_RANGE_INVALID)
+      if (
+        query.dateFrom &&
+        query.dateTo &&
+        resolveQueryDate(query.dateFrom) > resolveQueryDate(query.dateTo)
+      ) {
+        throw new ApiError(
+          StatusCodes.BAD_REQUEST,
+          'DATE_RANGE_INVALID',
+          TRANSACTION_ERROR_MESSAGES.DATE_RANGE_INVALID,
+        )
       }
       if (query.dateFrom) {
         filter.dateFrom = resolveQueryDate(query.dateFrom)
@@ -323,9 +438,16 @@ export class TransactionService {
     return filter
   }
 
-  private requireReadable(actor: User, transaction: HydratedDocument<TransactionDoc> | null): HydratedDocument<TransactionDoc> {
+  private requireReadable(
+    actor: User,
+    transaction: HydratedDocument<TransactionDoc> | null,
+  ): HydratedDocument<TransactionDoc> {
     if (!transaction) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'TRANSACTION_NOT_FOUND', TRANSACTION_ERROR_MESSAGES.NOT_FOUND)
+      throw new ApiError(
+        StatusCodes.NOT_FOUND,
+        'TRANSACTION_NOT_FOUND',
+        TRANSACTION_ERROR_MESSAGES.NOT_FOUND,
+      )
     }
     if (actor.role !== UserRole.ADMIN && transaction.ownerId.toString() !== actor.id) {
       throw new ApiError(StatusCodes.FORBIDDEN, 'FORBIDDEN', TRANSACTION_ERROR_MESSAGES.OWNER_ONLY)
@@ -333,10 +455,17 @@ export class TransactionService {
     return transaction
   }
 
-  private requireModifiable(actor: User, transaction: HydratedDocument<TransactionDoc> | null): HydratedDocument<TransactionDoc> {
+  private requireModifiable(
+    actor: User,
+    transaction: HydratedDocument<TransactionDoc> | null,
+  ): HydratedDocument<TransactionDoc> {
     const existing = this.requireReadable(actor, transaction)
     if (existing.status === TransactionStatus.CANCELLED) {
-      throw new ApiError(StatusCodes.CONFLICT, 'TRANSACTION_CANCELLED', TRANSACTION_ERROR_MESSAGES.CANCELLED)
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        'TRANSACTION_CANCELLED',
+        TRANSACTION_ERROR_MESSAGES.CANCELLED,
+      )
     }
     return existing
   }
