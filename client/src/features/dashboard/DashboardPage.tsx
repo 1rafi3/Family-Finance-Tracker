@@ -2,6 +2,9 @@ import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useWallets } from '@/features/wallets/useWallets'
 import { useTransactions } from '@/features/transactions/useTransactions'
+import { usePeople } from '@/features/people/usePeople'
+import { BeneficiaryDonutChart } from '@/features/analytics/components/BeneficiaryDonutChart'
+import { calculateBeneficiaryDistribution } from '@/features/analytics/analytics.utils'
 import { CategoryBreakdownChart } from './components/CategoryBreakdownChart'
 import { DashboardHeader } from './components/DashboardHeader'
 import { FinancialOverviewWidget } from './components/FinancialOverviewWidget'
@@ -32,13 +35,18 @@ const sectionVariants = {
 export function DashboardPage() {
   const { data: walletsData, isLoading: isWalletsLoading } = useWallets()
   const { data: txData, isLoading: isTxLoading } = useTransactions({ limit: 200 })
+  const { people, isLoading: isPeopleLoading } = usePeople()
 
   const wallets = useMemo(() => walletsData ?? [], [walletsData])
   const transactions = useMemo(() => txData?.data ?? [], [txData])
-  const isLoading = isWalletsLoading || isTxLoading
+  const isLoading = isWalletsLoading || isTxLoading || isPeopleLoading
 
   const walletDistribution = useMemo(() => calculateWalletDistribution(wallets), [wallets])
   const categoryBreakdown = useMemo(() => calculateCategoryBreakdown(transactions), [transactions])
+  const beneficiaryDistribution = useMemo(
+    () => calculateBeneficiaryDistribution(transactions, people, { mode: 'person' }),
+    [transactions, people],
+  )
   const quickInsights = useMemo(() => generateQuickInsights(wallets, transactions), [wallets, transactions])
   const dominantCurrency = useMemo(
     () => wallets.find((w) => !w.isArchived)?.currency ?? 'BDT',
@@ -69,14 +77,20 @@ export function DashboardPage() {
 
       {/* Analytics Grid */}
       <motion.div variants={sectionVariants}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <WalletDistributionChart
-            data={walletDistribution}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+          <BeneficiaryDonutChart
+            data={beneficiaryDistribution}
             currency={dominantCurrency}
             isLoading={isLoading}
+            isCompact
           />
           <CategoryBreakdownChart
             data={categoryBreakdown}
+            currency={dominantCurrency}
+            isLoading={isLoading}
+          />
+          <WalletDistributionChart
+            data={walletDistribution}
             currency={dominantCurrency}
             isLoading={isLoading}
           />

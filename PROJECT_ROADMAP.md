@@ -33,8 +33,8 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 | **P3** | **Phase A+: Person Deep Analytics & Breakdown** | ✅ **Done** | Spending Drawer, category breakdown, person transaction list, filters |
 | **P4** | **Phase B: Printable Statements & Receipts** | ✅ **Done** | Daily/Monthly/Custom statements, `@media print` A4 layout, PDF export |
 | **P5** | **Phase C: Budgets & Allowance Limits** | ✅ **Done** | Category budgets & Person-specific monthly spending allowance |
-| **P6** | **Phase D: Advanced Analytics & Charts** | 🔄 **Next Focus** | Beneficiary donut chart (Myself vs Family), cashflow trends |
-| **P7** | **Phase E: Savings Goals & Debt Payoff** | ⏳ **Upcoming** | Visual goal progress, loans & borrowing balance tracker |
+| **P6** | **Phase D: Advanced Analytics & Charts** | ✅ **Done** | Beneficiary donut chart (Myself vs Family), cashflow trends |
+| **P7** | **Phase E: Savings Goals & Debt Payoff** | 🔄 **Next Focus** | Visual goal progress, loans & borrowing balance tracker |
 
 ---
 
@@ -112,12 +112,35 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 
 ---
 
-### ⏳ Phase D: Visual Analytics & Distribution Insights
+### ✅ Phase D: Visual Analytics & Distribution Insights
 *Goal: High-level visual reports for monthly and annual financial planning.*
 
-- [ ] **Beneficiary Distribution Donut Chart**: "Myself (65%)" vs "Children (25%)" vs "Parents (10%)".
-- [ ] **Monthly Spending Comparison**: Bar charts comparing this month vs previous 3 months.
-- [ ] **Category Heatmap**: Identifying peak spending areas across the year.
+- [x] **Dedicated Analytics Command Center (`/analytics`)**:
+  - Global Period Selector: `Last 3 Months`, `Last 6 Months`, `This Year (12M)`, and `All Time`.
+  - 4 Executive KPI Metric Cards: Household Allocation split bar (`Personal % / Family %`), Top Family Beneficiary, Monthly Burn Rate, and Peak Outflow Month.
+- [x] **Beneficiary Distribution Donut Chart (`BeneficiaryDonutChart.tsx`)**:
+  - Recharts Donut (`PieChart`) with center total outflow badge and slice percentage indicators.
+  - Interactive Mode Toggle: **"By Person"** (individual dependent accounts) vs **"By Role"** (aggregated relationship grouping e.g. Child, Spouse).
+  - Custom glassmorphic tooltip displaying currency amounts, shares, and transaction counts.
+  - Also embedded in compact dashboard mode directly on the Home Dashboard (`/`).
+- [x] **Monthly Spending & Flow Comparison (`MonthlySpendingComparisonChart.tsx`)**:
+  - Multi-month trend bar chart comparing Inflow vs Outflow.
+  - Dedicated **"Personal vs Family"** mode separating own expenses from family dependents.
+  - Viewport Range Selector: `3M`, `6M`, and `12M`.
+  - Month-over-Month (MoM) % change indicators (e.g. `+100% MoM`) and Net Flow tags.
+- [x] **Category Spending Heatmap Matrix (`CategorySpendingHeatmap.tsx`)**:
+  - Category rows × Month columns intensity matrix (levels 0 to 4).
+  - Peak Month highlight badge for each category (e.g. `Sept (BDT 2,500)`).
+  - Dynamic cell hover inspect popover showing category, month, transaction count, and exact expenditure.
+  - Summary footer row calculating monthly outflow across all active categories.
+
+---
+
+### ⏳ Phase E: Savings Goals & Debt Payoff
+*Goal: Track wealth building milestones and personal liabilities/loans.*
+
+- [ ] **Savings Goals Management**: Target amounts, monthly contribution trackers, and celebration milestones.
+- [ ] **Loans & Borrowing Tracker**: Personal debts, lending to friends/family, and repayment ledgers.
 
 ---
 

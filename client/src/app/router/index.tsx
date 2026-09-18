@@ -16,6 +16,7 @@ const CategoriesPage = lazy(() => import('@/features/categories/CategoriesPage')
 const PeoplePage = lazy(() => import('@/features/people/PeoplePage'))
 const ReportsPage = lazy(() => import('@/features/reports/ReportsPage'))
 const BudgetsPage = lazy(() => import('@/features/budgets/BudgetsPage'))
+const AnalyticsPage = lazy(() => import('@/features/analytics/AnalyticsPage'))
 
 export function AppRouter() {
   return (
@@ -46,6 +47,7 @@ export function AppRouter() {
             <Route path="categories" element={<CategoriesPage />} />
             <Route path="people" element={<PeoplePage />} />
             <Route path="budgets" element={<BudgetsPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="savings-goals" element={<Placeholder title="Savings Goals" />} />
             <Route path="loans" element={<Placeholder title="Loans & Debts Tracker" />} />
             <Route path="reports" element={<ReportsPage />} />
