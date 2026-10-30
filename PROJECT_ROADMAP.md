@@ -35,6 +35,7 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 | **P5** | **Phase C: Budgets & Allowance Limits** | ✅ **Done** | Category budgets & Person-specific monthly spending allowance |
 | **P6** | **Phase D: Advanced Analytics & Charts** | ✅ **Done** | Beneficiary donut chart (Myself vs Family), cashflow trends |
 | **P7** | **Phase E: Savings Goals & Debt Payoff** | ✅ **Done** | Visual goal progress, quick deposits, loans & borrowing balance tracker, repayments |
+| **P8** | **Phase F: Security Hardening & Mobile Optimization** | ✅ **Done** | Full OWASP audit, auth rate-limiter, JWT guards, mobile bottom nav, responsive tables & modals |
 
 ---
 
@@ -153,6 +154,26 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 - [x] **Home Dashboard Integration (`/`)**:
   - Embedded **Savings Goals & Debts Snapshot** widget directly on the main dashboard.
   - QuickActions bar expanded with direct 1-click links to Savings Goals and Loans & Debts.
+
+---
+
+### ✅ Phase F: Production Readiness, Security Hardening & Mobile Optimization
+*Goal: Ensure personal financial data safety, robust defenses against OWASP Top 10 vulnerabilities, and seamless mobile responsiveness on phones and tablets.*
+
+- [x] **Security Hardening & OWASP Compliance**:
+  - Patched 8 auto-fixable dependency vulnerabilities via npm audit fix.
+  - Hardened `JWT_SECRET` with minimum 32-character requirement and production fail-fast check if placeholder secret is used.
+  - Added dedicated `authRateLimiter` (10 req/15min) on `/register` and `/login` to mitigate brute-force and bcrypt CPU exhaustion.
+  - Implemented token revocation via `passwordChangedAt` timestamp — immediately invalidates old tokens upon password change.
+  - Token verification extracts and validates `iat` (issued-at) against user's `passwordChangedAt`.
+  - Added 30-second request timeout with `AbortController` in client API caller.
+- [x] **Mobile Responsiveness & Usability (Bangladeshi UX)**:
+  - Added **Mobile Bottom Navigation Bar** (`BottomNav.tsx`) for instant 1-thumb navigation between Home, Wallets, Transactions, Budgets, and full menu drawer.
+  - Optimized `Dialog.tsx` with responsive padding (`p-4 sm:p-6`), top-right close button, and viewport sizing.
+  - Enhanced `Sheet.tsx` drawer navigation with backdrop blur and smooth sliding animation.
+  - Made data tables (`ReportsPage.tsx`, `TransactionListPage.tsx`, `CategorySpendingHeatmap.tsx`) fully scrollable horizontally (`overflow-x-auto`) on mobile with no truncated columns.
+  - Added `flex-wrap` and compact spacing across all filter bars (Savings Goals, Loans & Debts, People, Categories).
+  - Main content padding optimized with `pb-24 md:pb-6` so the mobile bottom nav never obscures cards, buttons, or charts.
 
 ---
 
