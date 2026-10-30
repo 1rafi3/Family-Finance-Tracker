@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   DEFAULT_CURRENCY,
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { useAuth } from '@/features/auth/useAuth'
+import { useCategories } from '@/features/categories/useCategories'
 import { usePeople } from '@/features/people/usePeople'
 import { DEFAULT_SUBCATEGORIES } from '../transaction.constants'
 
@@ -182,8 +183,20 @@ export function TransactionForm({
     void onSubmit(cleanedFormData)
   }
 
-  // Filter subcategories by type
-  const availableCategories = DEFAULT_SUBCATEGORIES.filter((c) => c.type === selectedType)
+  const categoryType =
+    selectedType === TransactionType.EXPENSE || selectedType === TransactionType.INCOME
+      ? (selectedType as unknown as import('@family-finance/shared').CategoryType)
+      : undefined
+
+  const { subCategories = [] } = useCategories(categoryType)
+
+  // Filter subcategories by type, merging custom user categories with defaults
+  const availableCategories = useMemo(() => {
+    if (subCategories.length > 0) {
+      return subCategories.map((s) => ({ id: s.id, name: s.name, type: s.type }))
+    }
+    return DEFAULT_SUBCATEGORIES.filter((c) => c.type === selectedType)
+  }, [subCategories, selectedType])
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
