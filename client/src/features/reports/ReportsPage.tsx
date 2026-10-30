@@ -528,8 +528,8 @@ export function ReportsPage() {
               <span>Category Allocation Summary</span>
             </h3>
 
-            <div className="rounded-lg border border-border/80 overflow-hidden print:border-gray-400 text-xs">
-              <table className="w-full text-left border-collapse">
+            <div className="rounded-lg border border-border/80 overflow-x-auto print:border-gray-400 text-xs">
+              <table className="w-full min-w-[500px] text-left border-collapse">
                 <thead className="bg-muted/50 print:bg-gray-100 border-b border-border/80 print:border-gray-400">
                   <tr>
                     <th className="py-2 px-3 font-semibold text-foreground print:text-black">Category</th>
@@ -596,8 +596,8 @@ export function ReportsPage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-lg border border-border/80 overflow-hidden print:border-gray-400 text-xs">
-              <table className="w-full text-left border-collapse">
+            <div className="rounded-lg border border-border/80 overflow-x-auto print:border-gray-400 text-xs">
+              <table className="w-full min-w-[640px] text-left border-collapse">
                 <thead className="bg-muted/50 print:bg-gray-100 border-b border-border/80 print:border-gray-400">
                   <tr>
                     <th className="py-2.5 px-3 font-semibold text-foreground print:text-black w-8">#</th>

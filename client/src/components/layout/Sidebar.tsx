@@ -43,11 +43,12 @@ const navItems: NavItem[] = [
 ]
 
 export function Sidebar({ isCollapsed, onToggleCollapse, onMobileNavigate }: SidebarProps) {
+  const isMobile = Boolean(onMobileNavigate)
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
       'group relative flex items-center rounded-lg text-sm font-medium transition-all duration-150',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-      isCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5 space-x-3',
+      isCollapsed && !isMobile ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5 space-x-3',
       isActive
         ? [
             'bg-primary/10 text-primary font-semibold',
@@ -61,9 +62,9 @@ export function Sidebar({ isCollapsed, onToggleCollapse, onMobileNavigate }: Sid
   return (
     <aside
       className={cn(
-        'relative flex flex-col border-r border-border/60 bg-card text-card-foreground',
-        'transition-[width] duration-300 ease-in-out',
-        isCollapsed ? 'w-[60px]' : 'w-64',
+        'relative flex flex-col bg-card text-card-foreground',
+        !isMobile && 'border-r border-border/60 transition-[width] duration-300 ease-in-out',
+        isMobile ? 'w-full' : isCollapsed ? 'w-[60px]' : 'w-64',
       )}
     >
       {/* Brand Header */}
@@ -73,7 +74,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse, onMobileNavigate }: Sid
           onClick={onMobileNavigate}
           className={cn(
             'flex items-center overflow-hidden rounded-lg focus:outline-none focus:ring-2 focus:ring-ring',
-            isCollapsed ? 'justify-center w-full' : 'space-x-3',
+            isCollapsed && !isMobile ? 'justify-center w-full' : 'space-x-3',
           )}
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">

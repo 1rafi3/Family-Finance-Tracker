@@ -148,7 +148,7 @@ export default function SavingsGoalsPage() {
       {/* Controls Bar: Search & Filter Tabs */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
         {/* Filter Tabs */}
-        <div className="flex items-center rounded-lg border border-border/70 bg-card p-1 shadow-sm">
+        <div className="flex flex-wrap items-center rounded-lg border border-border/70 bg-card p-1 shadow-sm gap-1">
           <button
             onClick={() => setActiveFilter('ALL')}
             className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${

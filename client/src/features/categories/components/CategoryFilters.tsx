@@ -42,7 +42,7 @@ export function CategoryFilters({
       {/* Tabs & Status */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Type selector pill */}
-        <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5">
+        <div className="flex flex-wrap items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 gap-0.5">
           {(['ALL', 'INCOME', 'EXPENSE'] as const).map((type) => (
             <button
               key={type}

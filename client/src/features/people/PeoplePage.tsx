@@ -131,7 +131,7 @@ export function PeoplePage() {
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Relationship Filter Tabs */}
-          <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5">
+          <div className="flex flex-wrap items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 gap-0.5">
             {[
               { key: 'ALL', label: 'All' },
               { key: 'CHILD', label: 'Children' },

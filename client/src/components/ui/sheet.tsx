@@ -9,9 +9,18 @@ interface SheetProps {
   side?: 'left' | 'right'
   title?: string
   className?: string
+  hideHeader?: boolean
 }
 
-export function Sheet({ isOpen, onClose, children, side = 'left', title, className }: SheetProps) {
+export function Sheet({
+  isOpen,
+  onClose,
+  children,
+  side = 'left',
+  title,
+  className,
+  hideHeader = false,
+}: SheetProps) {
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -40,23 +49,26 @@ export function Sheet({ isOpen, onClose, children, side = 'left', title, classNa
       {/* Drawer Container */}
       <div
         className={cn(
-          'fixed z-50 flex h-full w-full max-w-md flex-col bg-card p-6 shadow-2xl transition duration-300 ease-in-out border-r',
-          side === 'left' ? 'left-0' : 'right-0 border-l border-r-0',
+          'fixed z-50 flex h-full w-[85vw] max-w-xs sm:max-w-md flex-col bg-card shadow-2xl transition duration-300 ease-in-out',
+          side === 'left' ? 'left-0 border-r border-border' : 'right-0 border-l border-border',
           className,
         )}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-border">
-          {title ? <h2 className="text-lg font-semibold text-foreground">{title}</h2> : <div />}
-          <button
-            onClick={onClose}
-            className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto pt-4">{children}</div>
+        {!hideHeader && (
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            {title ? <h2 className="text-base sm:text-lg font-semibold text-foreground">{title}</h2> : <div />}
+            <button
+              onClick={onClose}
+              className="rounded-md p-1.5 text-muted-foreground opacity-70 hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+              aria-label="Close drawer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+        <div className="flex-1 overflow-y-auto">{children}</div>
       </div>
     </div>
   )
 }
+

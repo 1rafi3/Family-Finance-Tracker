@@ -128,7 +128,7 @@ export function AnalyticsPage() {
         </div>
 
         {/* Global Period Filter Pills */}
-        <div className="flex items-center rounded-xl border border-border/60 bg-muted/40 p-1 text-xs font-medium self-start md:self-auto shadow-xs">
+        <div className="flex flex-wrap items-center rounded-xl border border-border/60 bg-muted/40 p-1 text-xs font-medium self-start md:self-auto shadow-xs gap-1">
           <button
             type="button"
             onClick={() => {
