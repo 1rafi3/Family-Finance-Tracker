@@ -12,6 +12,8 @@ import { transactionRouter } from '../modules/transaction/index.js'
 import { categoryRouter } from '../modules/category/index.js'
 import { personRouter } from '../modules/person/index.js'
 import { budgetRouter } from '../modules/budget/index.js'
+import { savingsGoalRouter } from '../modules/savings-goal/index.js'
+import { loanRouter } from '../modules/loan/index.js'
 import { success } from '../utils/ApiResponse.js'
 
 export const apiRouter = Router()
@@ -25,6 +27,8 @@ apiRouter.use('/transactions', transactionRouter)
 apiRouter.use('/categories', categoryRouter)
 apiRouter.use('/people', personRouter)
 apiRouter.use('/budgets', budgetRouter)
+apiRouter.use('/savings-goals', savingsGoalRouter)
+apiRouter.use('/loans', loanRouter)
 
 apiRouter.get('/health', (_req, res) => {
   const connected = isDatabaseConnected()

@@ -29,9 +29,21 @@ export async function authenticate(
       return
     }
 
+    // Invalidate tokens issued before the last password change.
+    // This ensures a stolen/old token is rejected once the user changes their password.
+    if (user.passwordChangedAt) {
+      const passwordChangedAtMs = user.passwordChangedAt.getTime()
+      const tokenIssuedAtMs = payload.iat * 1000
+      if (tokenIssuedAtMs < passwordChangedAtMs) {
+        next(ApiError.unauthorized(AUTH_ERROR_MESSAGES.TOKEN_INVALID))
+        return
+      }
+    }
+
     req.user = serializeUser(user)
     next()
   } catch (error) {
     next(error)
   }
 }
+

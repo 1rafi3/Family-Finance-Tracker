@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { authenticate, validate } from '../../middleware/index.js'
+import { authRateLimiter } from '../../middleware/rateLimiter.js'
 import { AuthController } from './auth.controller.js'
 import { authRepository } from './auth.repository.js'
 import { changePasswordSchema, loginSchema, registerSchema } from './auth.schema.js'
@@ -10,8 +11,8 @@ const authController = new AuthController(authService)
 
 export const authRouter = Router()
 
-authRouter.post('/register', validate(registerSchema), authController.register)
-authRouter.post('/login', validate(loginSchema), authController.login)
+authRouter.post('/register', authRateLimiter, validate(registerSchema), authController.register)
+authRouter.post('/login', authRateLimiter, validate(loginSchema), authController.login)
 authRouter.get('/me', authenticate, authController.me)
 authRouter.patch(
   '/password',
@@ -20,3 +21,4 @@ authRouter.patch(
   authController.changePassword,
 )
 authRouter.post('/logout', authenticate, authController.logout)
+

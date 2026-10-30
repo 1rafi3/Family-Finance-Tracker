@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowRight, ArrowUpRight, PlusCircle, Wallet } from 'lucide-react'
+import {
+  BarChart3,
+  Landmark,
+  PiggyBank,
+  PieChart,
+  PlusCircle,
+  Wallet,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CreateTransactionModal } from '@/features/transactions/components/CreateTransactionModal'
@@ -21,7 +28,7 @@ export function QuickActions() {
           <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <Button
               variant="outline"
               className="h-auto py-3 flex-col gap-2 justify-center"
@@ -40,23 +47,43 @@ export function QuickActions() {
               <span className="text-xs font-medium">Create Wallet</span>
             </Button>
 
-            <Link to="/transactions" className="contents">
+            <Link to="/savings-goals" className="contents">
               <Button
                 variant="outline"
                 className="h-auto py-3 flex-col gap-2 justify-center w-full"
               >
-                <ArrowRight className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium">All Transactions</span>
+                <PiggyBank className="h-5 w-5 text-primary" />
+                <span className="text-xs font-medium">Savings Goals</span>
               </Button>
             </Link>
 
-            <Link to="/wallets" className="contents">
+            <Link to="/loans" className="contents">
               <Button
                 variant="outline"
                 className="h-auto py-3 flex-col gap-2 justify-center w-full"
               >
-                <ArrowUpRight className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium">Manage Wallets</span>
+                <Landmark className="h-5 w-5 text-primary" />
+                <span className="text-xs font-medium">Loans & Debts</span>
+              </Button>
+            </Link>
+
+            <Link to="/budgets" className="contents">
+              <Button
+                variant="outline"
+                className="h-auto py-3 flex-col gap-2 justify-center w-full"
+              >
+                <PieChart className="h-5 w-5 text-primary" />
+                <span className="text-xs font-medium">Monthly Budgets</span>
+              </Button>
+            </Link>
+
+            <Link to="/reports" className="contents">
+              <Button
+                variant="outline"
+                className="h-auto py-3 flex-col gap-2 justify-center w-full"
+              >
+                <BarChart3 className="h-5 w-5 text-primary" />
+                <span className="text-xs font-medium">Print Statements</span>
               </Button>
             </Link>
           </div>

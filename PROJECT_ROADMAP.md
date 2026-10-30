@@ -34,7 +34,7 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 | **P4** | **Phase B: Printable Statements & Receipts** | ✅ **Done** | Daily/Monthly/Custom statements, `@media print` A4 layout, PDF export |
 | **P5** | **Phase C: Budgets & Allowance Limits** | ✅ **Done** | Category budgets & Person-specific monthly spending allowance |
 | **P6** | **Phase D: Advanced Analytics & Charts** | ✅ **Done** | Beneficiary donut chart (Myself vs Family), cashflow trends |
-| **P7** | **Phase E: Savings Goals & Debt Payoff** | 🔄 **Next Focus** | Visual goal progress, loans & borrowing balance tracker |
+| **P7** | **Phase E: Savings Goals & Debt Payoff** | ✅ **Done** | Visual goal progress, quick deposits, loans & borrowing balance tracker, repayments |
 
 ---
 
@@ -136,11 +136,23 @@ FinFlow is designed as a **premium, private personal wealth portal** for individ
 
 ---
 
-### ⏳ Phase E: Savings Goals & Debt Payoff
+### ✅ Phase E: Savings Goals & Debt Payoff
 *Goal: Track wealth building milestones and personal liabilities/loans.*
 
-- [ ] **Savings Goals Management**: Target amounts, monthly contribution trackers, and celebration milestones.
-- [ ] **Loans & Borrowing Tracker**: Personal debts, lending to friends/family, and repayment ledgers.
+- [x] **Savings Goals Management (`/savings-goals`)**:
+  - Target amounts, current saved progress, and celebration milestones (`COMPLETED`).
+  - Bangladeshi cultural preset templates: Emergency Fund (জরুরি ফান্ড), Eid Shopping (ঈদের শপিং), Sajek/Cox's Bazar Tour (ফ্যামিলি ট্যুর), Hajj & Umrah (হজ্জ-ওমরাহ), Gadgets (ল্যাপটপ), Gold/Jewelry (স্বর্ণ ক্রয়), and Bank DPS (ডিপিএস).
+  - 1-Click **"Add Funds / Deposit"** modal with quick BDT chip selectors (+৳500, +৳1,000, +৳5,000, +৳10,000) and live progress preview.
+  - Days-remaining and deadline overdue indicators with interactive spotlight cards.
+  - Executive KPI metrics row: Total Target, Total Saved, Remaining Gap, and Achieved Milestones.
+- [x] **Loans & Borrowing Tracker (`/loans`)**:
+  - Personal debts, lending to friends/family ("Owed to Me" / পাওনা টাকা) vs borrowings ("I Owe" / দেনা টাকা).
+  - 1-Click **"Record Payment / Collection"** modal with quick full/partial settlement shortcuts.
+  - Net Position tracking (`Total Lent - Total Borrowed`) for complete liability visibility.
+  - Overdue warning badges, due date counters, 0% friendly loan support, and automatic settlement when remaining balance reaches zero.
+- [x] **Home Dashboard Integration (`/`)**:
+  - Embedded **Savings Goals & Debts Snapshot** widget directly on the main dashboard.
+  - QuickActions bar expanded with direct 1-click links to Savings Goals and Loans & Debts.
 
 ---
 

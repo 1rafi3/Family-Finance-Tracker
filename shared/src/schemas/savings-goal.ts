@@ -13,7 +13,7 @@ import {
 } from '../validators/index.js'
 
 const savingsGoalShape = {
-  ownerId: idSchema,
+  ownerId: idSchema.optional(),
   name: nameSchema,
   targetAmount: positiveMoneySchema,
   currentAmount: nonNegativeMoneySchema,

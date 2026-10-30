@@ -39,6 +39,8 @@ export function triggerUnauthorized(): void {
   }
 }
 
+const REQUEST_TIMEOUT_MS = 30_000
+
 export async function apiClient<T>(path: string, options: ApiClientOptions = {}): Promise<T> {
   const token = getStoredToken()
 
@@ -51,10 +53,24 @@ export async function apiClient<T>(path: string, options: ApiClientOptions = {})
     headers.Authorization = `Bearer ${token}`
   }
 
-  const response = await fetch(`${env.apiUrl}${path}`, {
-    ...options,
-    headers,
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
+  let response: Response
+  try {
+    response = await fetch(`${env.apiUrl}${path}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    })
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new ApiError(408, 'REQUEST_TIMEOUT', 'Request timed out. Please try again.')
+    }
+    throw err
+  } finally {
+    clearTimeout(timeoutId)
+  }
 
   const json = await response.json().catch(() => null)
 

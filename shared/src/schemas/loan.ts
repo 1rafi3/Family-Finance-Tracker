@@ -17,10 +17,11 @@ import {
 /** Validates creation of a loan. `remainingBalance` defaults to `principal`. */
 export const loanCreateSchema = z
   .object({
-    ownerId: idSchema,
+    ownerId: idSchema.optional(),
     direction: z.nativeEnum(LoanDirection),
     counterpartyName: counterpartyNameSchema,
     principal: positiveMoneySchema,
+    remainingBalance: nonNegativeMoneySchema.optional(),
     interestRate: interestRateSchema.optional(),
     currency: currencySchema.default(DEFAULT_CURRENCY),
     termMonths: termMonthsSchema.optional(),

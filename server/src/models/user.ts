@@ -9,6 +9,8 @@ export interface UserDoc {
   role: UserRole
   isActive: boolean
   lastLoginAt: Date | null
+  /** Timestamp of the last password change. Tokens issued before this time are rejected. */
+  passwordChangedAt: Date | null
   createdBy: mongoose.Types.ObjectId | null
   updatedBy: mongoose.Types.ObjectId | null
   createdAt: Date
@@ -31,6 +33,7 @@ const userSchema = new mongoose.Schema<UserDoc>(
     role: { type: String, enum: Object.values(UserRole), default: UserRole.MEMBER, required: true },
     isActive: { type: Boolean, default: true, required: true },
     lastLoginAt: { type: Date, default: null },
+    passwordChangedAt: { type: Date, default: null },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   },

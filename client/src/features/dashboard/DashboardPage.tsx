@@ -11,6 +11,7 @@ import { FinancialOverviewWidget } from './components/FinancialOverviewWidget'
 import { QuickActions } from './components/QuickActions'
 import { QuickInsightsWidget } from './components/QuickInsightsWidget'
 import { RecentTransactionsWidget } from './components/RecentTransactionsWidget'
+import { SavingsAndDebtsWidget } from './components/SavingsAndDebtsWidget'
 import { WalletDistributionChart } from './components/WalletDistributionChart'
 import { WalletSummaryWidget } from './components/WalletSummaryWidget'
 import {
@@ -96,6 +97,11 @@ export function DashboardPage() {
           />
           <QuickInsightsWidget insights={quickInsights} isLoading={isLoading} />
         </div>
+      </motion.div>
+
+      {/* Savings Goals & Debts Snapshot */}
+      <motion.div variants={sectionVariants}>
+        <SavingsAndDebtsWidget currency={dominantCurrency} />
       </motion.div>
 
       {/* Bottom split — Wallets + Recent Transactions */}

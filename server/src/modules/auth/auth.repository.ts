@@ -33,7 +33,7 @@ export class AuthRepository extends BaseRepository<UserDoc> {
   }
 
   updatePassword(id: Id, passwordHash: string): Promise<HydratedDocument<UserDoc> | null> {
-    return this.updateById(id, { passwordHash })
+    return this.updateById(id, { passwordHash, passwordChangedAt: new Date() })
   }
 
   async updateLastLoginAt(id: Id): Promise<void> {

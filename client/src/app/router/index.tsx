@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import { LoadingScreen } from '@/components/common/LoadingScreen'
 import { NotFoundPage } from '@/components/common/NotFoundPage'
-import { Placeholder } from '@/components/common/Placeholder'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
 import { PublicRoute } from '@/features/auth/PublicRoute'
@@ -17,6 +16,8 @@ const PeoplePage = lazy(() => import('@/features/people/PeoplePage'))
 const ReportsPage = lazy(() => import('@/features/reports/ReportsPage'))
 const BudgetsPage = lazy(() => import('@/features/budgets/BudgetsPage'))
 const AnalyticsPage = lazy(() => import('@/features/analytics/AnalyticsPage'))
+const SavingsGoalsPage = lazy(() => import('@/features/savings-goals/SavingsGoalsPage'))
+const LoansPage = lazy(() => import('@/features/loans/LoansPage'))
 
 export function AppRouter() {
   return (
@@ -48,8 +49,8 @@ export function AppRouter() {
             <Route path="people" element={<PeoplePage />} />
             <Route path="budgets" element={<BudgetsPage />} />
             <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="savings-goals" element={<Placeholder title="Savings Goals" />} />
-            <Route path="loans" element={<Placeholder title="Loans & Debts Tracker" />} />
+            <Route path="savings-goals" element={<SavingsGoalsPage />} />
+            <Route path="loans" element={<LoansPage />} />
             <Route path="reports" element={<ReportsPage />} />
           </Route>
 

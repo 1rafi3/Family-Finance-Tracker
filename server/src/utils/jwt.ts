@@ -9,9 +9,11 @@ export interface AccessTokenPayload {
   sub: string
   /** Role claim; server-side authorization always uses the live user from the DB. */
   role: UserRole
+  /** Issued-at Unix timestamp (seconds). Used for post-password-change token invalidation. */
+  iat: number
 }
 
-export function signAccessToken(payload: AccessTokenPayload): string {
+export function signAccessToken(payload: Omit<AccessTokenPayload, 'iat'>): string {
   return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'],
   })
@@ -23,12 +25,14 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
     if (
       typeof decoded === 'string' ||
       typeof decoded.sub !== 'string' ||
-      typeof decoded.role !== 'string'
+      typeof decoded.role !== 'string' ||
+      typeof decoded.iat !== 'number'
     ) {
       throw new Error('Unexpected token payload')
     }
-    return { sub: decoded.sub, role: decoded.role as UserRole }
+    return { sub: decoded.sub, role: decoded.role as UserRole, iat: decoded.iat }
   } catch {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'TOKEN_INVALID', 'Invalid or expired token')
   }
 }
+
